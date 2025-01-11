@@ -5,15 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Portfolio</title>
   <link rel="stylesheet" href="style.css">
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script>Pi.init({ version: "2.0" })</script>
+<script>
+  // Authenticate the user, and get permission to request payments from them:
+const scopes = ['payments'];
+
+// Read more about this callback in the SDK reference:
+function onIncompletePaymentFound(payment) { /* ... */ };
+
+Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+  console.log(`Hi there! You're ready to make payments!`);
+}).catch(function(error) {
+  console.error(error);
+});
+</script>
 </head>
 <body>
   <header>
     <div class="container">
       <h1>My Portfolio</h1>
       <nav>
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
+        <a href="about.html">About</a>
+        <a href="projects.html">Projects</a>
+        <a href="contact.html">Contact</a>
       </nav>
     </div>
   </header>
@@ -22,7 +37,7 @@
     <section id="about">
       <div class="container">
         <h2>About Me</h2>
-        <p>Hello! I'm [Your Name], a passionate [your profession, e.g., Web Developer]. I specialize in creating stunning, functional, and user-friendly websites.</p>
+        <p>Hello! I'm Ahmad Hamza, a passionate programming, digital content, Web Developer. I specialize in creating stunning, functional, and user-friendly websites.</p>
       </div>
     </section>
 
