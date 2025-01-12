@@ -4,211 +4,95 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DBwallet</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
   <style>
-    /* General Styles */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f4f4f4;
-      color: #333;
-    }
-
-    header {
-      background-color: #4caf50;
-      color: white;
       text-align: center;
-      padding: 20px;
+      background: #f0f0f0;
     }
-
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-    }
-
-    header p {
-      margin: 5px 0 0;
-      font-size: 1.2rem;
-    }
-
-    /* Main Section */
-    .container {
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .wallet-dashboard {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-
-    .wallet-dashboard h2 {
-      margin: 0;
-      color: #4caf50;
-      font-size: 2rem;
-    }
-
-    .wallet-actions button {
-      background-color: #4caf50;
+    header {
+      background: #2b2d42;
       color: white;
-      border: none;
+      padding: 20px;
+    }
+    main {
+      margin: 20px;
+    }
+    button {
       padding: 10px 20px;
-      margin-left: 10px;
+      font-size: 16px;
+      margin: 10px;
+      border: none;
+      background: #8d99ae;
+      color: white;
       cursor: pointer;
-      font-size: 1rem;
       border-radius: 5px;
     }
-
-    .wallet-actions button:hover {
-      background-color: #45a049;
+    button:hover {
+      background: #ef233c;
     }
-
-    .transactions {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .transactions h3 {
-      margin: 0 0 15px;
-    }
-
-    .transactions table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .transactions th, .transactions td {
-      text-align: left;
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .transactions th {
-      background: #f9f9f9;
-    }
-
-    footer {
-      text-align: center;
-      padding: 10px;
-      background: #333;
-      color: white;
+    .wallet-info {
       margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+    footer {
+      margin-top: 30px;
+      padding: 10px;
+      background: #2b2d42;
+      color: white;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>DBwallet</h1>
-    <p>Your Secure Crypto Wallet</p>
+    <p>Your simple cryptocurrency wallet</p>
   </header>
 
-  <div class="container">
-    <!-- Wallet Dashboard -->
-    <div class="wallet-dashboard">
-      <h2>Balance: <span id="balance">0.00</span> USD</h2>
-      <div class="wallet-actions">
-        <button onclick="addFunds()">Add Funds</button>
-        <button onclick="sendFunds()">Send Funds</button>
-      </div>
-    </div>
+  <main>
+    <button onclick="connectWallet()">Connect Wallet</button>
+    <button onclick="makePayment()">Mock Payment</button>
 
-    <!-- Transactions -->
-    <div class="transactions">
-      <h3>Transaction History</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="transaction-table">
-          <tr>
-            <td colspan="4" style="text-align: center;">No transactions yet</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="wallet-info">
+      <p id="wallet-address">Wallet Address: Not Connected</p>
+      <p id="payment-status">Payment Status: Not Initiated</p>
     </div>
-  </div>
+  </main>
 
   <footer>
-    <p>DBwallet &copy; 2025. All rights reserved.</p>
+    <p>&copy; 2025 DBwallet. All rights reserved.</p>
   </footer>
 
   <script>
-    let balance = 0;
+    let web3;
 
-    // Add Funds Simulation
-    function addFunds() {
-      const amount = prompt("Enter amount to add (USD):");
-      if (amount && parseFloat(amount) > 0) {
-        balance += parseFloat(amount);
-        document.getElementById("balance").innerText = balance.toFixed(2);
-
-        addTransaction("Credit", parseFloat(amount), "Completed");
-        alert(`Successfully added $${amount}`);
-      } else {
-        alert("Invalid amount.");
-      }
-    }
-
-    // Send Funds Simulation
-    function sendFunds() {
-      const amount = prompt("Enter amount to send (USD):");
-      if (amount && parseFloat(amount) > 0) {
-        if (balance >= parseFloat(amount)) {
-          balance -= parseFloat(amount);
-          document.getElementById("balance").innerText = balance.toFixed(2);
-
-          addTransaction("Debit", parseFloat(amount), "Completed");
-          alert(`Successfully sent $${amount}`);
-        } else {
-          alert("Insufficient balance.");
+    // Function to connect MetaMask
+    async function connectWallet() {
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        try {
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          document.getElementById('wallet-address').innerText = `Wallet Address: ${accounts[0]}`;
+        } catch (err) {
+          alert('Connection rejected or MetaMask not detected.');
         }
       } else {
-        alert("Invalid amount.");
+        alert('MetaMask is not installed! Please install MetaMask to use this wallet.');
       }
     }
 
-    // Add Transaction to History
-    function addTransaction(type, amount, status) {
-      const table = document.getElementById("transaction-table");
-      const row = document.createElement("tr");
-
-      const dateCell = document.createElement("td");
-      dateCell.innerText = new Date().toLocaleString();
-
-      const typeCell = document.createElement("td");
-      typeCell.innerText = type;
-
-      const amountCell = document.createElement("td");
-      amountCell.innerText = `$${amount.toFixed(2)}`;
-
-      const statusCell = document.createElement("td");
-      statusCell.innerText = status;
-
-      row.appendChild(dateCell);
-      row.appendChild(typeCell);
-      row.appendChild(amountCell);
-      row.appendChild(statusCell);
-
-      // Remove "No transactions yet" if present
-      if (table.querySelector("tr td[colspan='4']")) {
-        table.innerHTML = "";
-      }
-
-      table.appendChild(row);
+    // Mock Payment Function
+    function makePayment() {
+      // This is just a placeholder function to simulate a payment
+      const paymentStatus = document.getElementById('payment-status');
+      paymentStatus.innerText = 'Payment Status: Payment initiated...';
+      setTimeout(() => {
+        paymentStatus.innerText = 'Payment Status: Payment successful!';
+      }, 2000); // Simulate payment delay
     }
   </script>
 </body>
