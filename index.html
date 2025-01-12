@@ -1,100 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DBwallet</title>
-  <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      background: #f0f0f0;
-    }
-    header {
-      background: #2b2d42;
-      color: white;
-      padding: 20px;
-    }
-    main {
-      margin: 20px;
-    }
-    button {
-      padding: 12px 18px;
-      font-size: 16px;
-      margin: 10px;
-      border: none;
-      background: #8d99ae;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
-      width: 80%;
-    }
-    button:hover {
-      background: #ef233c;
-    }
-    .wallet-info {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #333;
-      word-wrap: break-word;
-    }
-    footer {
-      margin-top: 30px;
-      padding: 10px;
-      background: #2b2d42;
-      color: white;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptocurrency Expert Advisor</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <h1>DBwallet</h1>
-    <p>Your simple cryptocurrency wallet</p>
-  </header>
-
-  <main>
-    <button onclick="connectWallet()">Connect Wallet</button>
-    <button onclick="makePayment()">Mock Payment</button>
-
-    <div class="wallet-info">
-      <p id="wallet-address">Wallet Address: Not Connected</p>
-      <p id="payment-status">Payment Status: Not Initiated</p>
+    <div class="container">
+        <h1>Cryptocurrency Expert Advisor</h1>
+        
+        <div class="condition-inputs">
+            <h2>Set Trading Conditions</h2>
+            <div>
+                <label for="base-currency">Base Currency:</label>
+                <input type="text" id="base-currency" value="USDT">
+            </div>
+            <div>
+                <label for="order-asset">Order Asset:</label>
+                <input type="text" id="order-asset" value="DOGS">
+            </div>
+            <div>
+                <label for="buy-threshold">Buy Threshold (%) below base price:</label>
+                <input type="number" id="buy-threshold" value="95" step="0.1" min="0">
+            </div>
+            <div>
+                <label for="sell-threshold">Sell Threshold (%) above base price:</label>
+                <input type="number" id="sell-threshold" value="105" step="0.1" min="0">
+            </div>
+            <div>
+                <label for="order-quantity">Order Quantity:</label>
+                <input type="number" id="order-quantity" value="1" step="0.01" min="0.01">
+            </div>
+        </div>
+        
+        <div class="manual-orders">
+            <h2>Manual Orders</h2>
+            <button id="buy-button">Buy</button>
+            <button id="sell-button">Sell</button>
+        </div>
+        
+        <div class="crypto-info">
+            <h2>Base Currency Price</h2>
+            <div id="base-currency-price">Loading...</div>
+        </div>
+        
+        <div class="crypto-info">
+            <h2>Order Asset Price</h2>
+            <div id="order-asset-price">Loading...</div>
+        </div>
+        
+        <div class="orders">
+            <h2>Orders</h2>
+            <div id="order-log">No orders placed yet.</div>
+        </div>
     </div>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 DBwallet. All rights reserved.</p>
-  </footer>
-
-  <script>
-    let web3;
-
-    // Function to connect MetaMask
-    async function connectWallet() {
-      if (window.ethereum) {
-        web3 = new Web3(window.ethereum);
-        try {
-          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-          document.getElementById('wallet-address').innerText = `Wallet Address: ${accounts[0]}`;
-        } catch (err) {
-          alert('Connection rejected or MetaMask not detected.');
-        }
-      } else {
-        alert('MetaMask is not installed! Install MetaMask from the Play Store and use its browser.');
-      }
-    }
-
-    // Mock Payment Function
-    function makePayment() {
-      const paymentStatus = document.getElementById('payment-status');
-      paymentStatus.innerText = 'Payment Status: Payment initiated...';
-      setTimeout(() => {
-        paymentStatus.innerText = 'Payment Status: Payment successful!';
-      }, 2000); // Simulate payment delay
-    }
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
