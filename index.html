@@ -10,7 +10,7 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f5f5f5;
+      background: #f4f4f4;
       color: #333;
     }
 
@@ -28,73 +28,72 @@
 
     header p {
       margin: 5px 0 0;
+      font-size: 1.2rem;
     }
 
     /* Main Section */
-    main {
+    .container {
       padding: 20px;
-      max-width: 800px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
-    .balance-section {
-      text-align: center;
+    .wallet-dashboard {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
     }
 
-    .balance-section h2 {
-      font-size: 2rem;
+    .wallet-dashboard h2 {
+      margin: 0;
       color: #4caf50;
+      font-size: 2rem;
     }
 
-    .add-funds {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .add-funds input {
-      padding: 10px;
-      width: 200px;
-      font-size: 1rem;
-      margin-right: 10px;
-    }
-
-    .add-funds button {
-      padding: 10px 20px;
+    .wallet-actions button {
       background-color: #4caf50;
       color: white;
       border: none;
+      padding: 10px 20px;
+      margin-left: 10px;
       cursor: pointer;
       font-size: 1rem;
+      border-radius: 5px;
     }
 
-    .add-funds button:hover {
+    .wallet-actions button:hover {
       background-color: #45a049;
     }
 
-    /* Transaction History */
-    .transaction-history {
+    .transactions {
       background: white;
-      padding: 15px;
-      border-radius: 5px;
+      padding: 20px;
+      border-radius: 8px;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
 
-    .transaction-history h3 {
-      margin-top: 0;
+    .transactions h3 {
+      margin: 0 0 15px;
     }
 
-    .transaction-history ul {
-      list-style: none;
-      padding: 0;
+    .transactions table {
+      width: 100%;
+      border-collapse: collapse;
     }
 
-    .transaction-history li {
-      background: #f9f9f9;
+    .transactions th, .transactions td {
+      text-align: left;
       padding: 10px;
-      margin-bottom: 5px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .transactions th {
+      background: #f9f9f9;
     }
 
     footer {
@@ -109,69 +108,107 @@
 <body>
   <header>
     <h1>DBwallet</h1>
-    <p>Your Simple Crypto Wallet</p>
+    <p>Your Secure Crypto Wallet</p>
   </header>
 
-  <main>
-    <!-- Balance Section -->
-    <section class="balance-section">
+  <div class="container">
+    <!-- Wallet Dashboard -->
+    <div class="wallet-dashboard">
       <h2>Balance: <span id="balance">0.00</span> USD</h2>
-    </section>
+      <div class="wallet-actions">
+        <button onclick="addFunds()">Add Funds</button>
+        <button onclick="sendFunds()">Send Funds</button>
+      </div>
+    </div>
 
-    <!-- Add Funds Section -->
-    <section class="add-funds">
-      <h3>Add Funds</h3>
-      <input type="number" id="add-amount" placeholder="Enter amount" min="1">
-      <button onclick="addFunds()">Add</button>
-    </section>
-
-    <!-- Transaction History -->
-    <section class="transaction-history">
+    <!-- Transactions -->
+    <div class="transactions">
       <h3>Transaction History</h3>
-      <ul id="transactions"></ul>
-    </section>
-  </main>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="transaction-table">
+          <tr>
+            <td colspan="4" style="text-align: center;">No transactions yet</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <footer>
     <p>DBwallet &copy; 2025. All rights reserved.</p>
   </footer>
 
   <script>
-    // Initialize wallet balance and transactions
     let balance = 0;
-    const transactions = [];
 
-    // Function to add funds
+    // Add Funds Simulation
     function addFunds() {
-      const amountInput = document.getElementById('add-amount');
-      const amount = parseFloat(amountInput.value);
+      const amount = prompt("Enter amount to add (USD):");
+      if (amount && parseFloat(amount) > 0) {
+        balance += parseFloat(amount);
+        document.getElementById("balance").innerText = balance.toFixed(2);
 
-      if (amount > 0) {
-        // Update balance
-        balance += amount;
-        document.getElementById('balance').innerText = balance.toFixed(2);
-
-        // Add to transaction history
-        const transaction = `Added ${amount.toFixed(2)} USD`;
-        transactions.push(transaction);
-        updateTransactionHistory();
-
-        // Clear input
-        amountInput.value = '';
+        addTransaction("Credit", parseFloat(amount), "Completed");
+        alert(`Successfully added $${amount}`);
       } else {
-        alert('Please enter a valid amount.');
+        alert("Invalid amount.");
       }
     }
 
-    // Function to update transaction history
-    function updateTransactionHistory() {
-      const transactionList = document.getElementById('transactions');
-      transactionList.innerHTML = ''; // Clear the list
-      transactions.forEach((transaction) => {
-        const li = document.createElement('li');
-        li.textContent = transaction;
-        transactionList.appendChild(li);
-      });
+    // Send Funds Simulation
+    function sendFunds() {
+      const amount = prompt("Enter amount to send (USD):");
+      if (amount && parseFloat(amount) > 0) {
+        if (balance >= parseFloat(amount)) {
+          balance -= parseFloat(amount);
+          document.getElementById("balance").innerText = balance.toFixed(2);
+
+          addTransaction("Debit", parseFloat(amount), "Completed");
+          alert(`Successfully sent $${amount}`);
+        } else {
+          alert("Insufficient balance.");
+        }
+      } else {
+        alert("Invalid amount.");
+      }
+    }
+
+    // Add Transaction to History
+    function addTransaction(type, amount, status) {
+      const table = document.getElementById("transaction-table");
+      const row = document.createElement("tr");
+
+      const dateCell = document.createElement("td");
+      dateCell.innerText = new Date().toLocaleString();
+
+      const typeCell = document.createElement("td");
+      typeCell.innerText = type;
+
+      const amountCell = document.createElement("td");
+      amountCell.innerText = `$${amount.toFixed(2)}`;
+
+      const statusCell = document.createElement("td");
+      statusCell.innerText = status;
+
+      row.appendChild(dateCell);
+      row.appendChild(typeCell);
+      row.appendChild(amountCell);
+      row.appendChild(statusCell);
+
+      // Remove "No transactions yet" if present
+      if (table.querySelector("tr td[colspan='4']")) {
+        table.innerHTML = "";
+      }
+
+      table.appendChild(row);
     }
   </script>
 </body>
