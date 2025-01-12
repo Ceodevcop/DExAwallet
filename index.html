@@ -3,75 +3,176 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Portfolio</title>
-  <link rel="stylesheet" href="style.css">
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
-<script>Pi.init({ version: "2.0" })</script>
-<script>
-  // Authenticate the user, and get permission to request payments from them:
-const scopes = ['payments'];
+  <title>DBwallet</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
 
-// Read more about this callback in the SDK reference:
-function onIncompletePaymentFound(payment) { /* ... */ };
+    header {
+      background-color: #4caf50;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
 
-Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
-  console.log(`Hi there! You're ready to make payments!`);
-}).catch(function(error) {
-  console.error(error);
-});
-</script>
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+
+    header p {
+      margin: 5px 0 0;
+    }
+
+    /* Main Section */
+    main {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .balance-section {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .balance-section h2 {
+      font-size: 2rem;
+      color: #4caf50;
+    }
+
+    .add-funds {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .add-funds input {
+      padding: 10px;
+      width: 200px;
+      font-size: 1rem;
+      margin-right: 10px;
+    }
+
+    .add-funds button {
+      padding: 10px 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .add-funds button:hover {
+      background-color: #45a049;
+    }
+
+    /* Transaction History */
+    .transaction-history {
+      background: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .transaction-history h3 {
+      margin-top: 0;
+    }
+
+    .transaction-history ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .transaction-history li {
+      background: #f9f9f9;
+      padding: 10px;
+      margin-bottom: 5px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background: #333;
+      color: white;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <div class="container">
-      <h1>My Portfolio</h1>
-      <nav>
-        <a href="about.html">About</a>
-        <a href="projects.html">Projects</a>
-        <a href="contact.html">Contact</a>
-      </nav>
-    </div>
+    <h1>DBwallet</h1>
+    <p>Your Simple Crypto Wallet</p>
   </header>
-  
+
   <main>
-    <section id="about">
-      <div class="container">
-        <h2>About Me</h2>
-        <p>Hello! I'm Ahmad Hamza, a passionate programming, digital content, Web Developer. I specialize in creating stunning, functional, and user-friendly websites.</p>
-      </div>
+    <!-- Balance Section -->
+    <section class="balance-section">
+      <h2>Balance: <span id="balance">0.00</span> USD</h2>
     </section>
 
-    <section id="projects">
-      <div class="container">
-        <h2>My Projects</h2>
-        <div class="project-list">
-          <div class="project-item">
-            <h3>Project 1</h3>
-            <p>A brief description of Project 1.</p>
-            <a href="https://example.com" target="_blank">View Project</a>
-          </div>
-          <div class="project-item">
-            <h3>Project 2</h3>
-            <p>A brief description of Project 2.</p>
-            <a href="https://example.com" target="_blank">View Project</a>
-          </div>
-        </div>
-      </div>
+    <!-- Add Funds Section -->
+    <section class="add-funds">
+      <h3>Add Funds</h3>
+      <input type="number" id="add-amount" placeholder="Enter amount" min="1">
+      <button onclick="addFunds()">Add</button>
     </section>
 
-    <section id="contact">
-      <div class="container">
-        <h2>Contact Devcxxp</h2>
-        <p>Email: <a href="mailto:dev.cxxp@gmail.com">dev.cxxp@gmail.com</a></p>
-        <p>LinkedIn: <a href="https://linkedin.com/in/yourprofile" target="_blank">Your LinkedIn</a></p>
-      </div>
+    <!-- Transaction History -->
+    <section class="transaction-history">
+      <h3>Transaction History</h3>
+      <ul id="transactions"></ul>
     </section>
   </main>
-  
+
   <footer>
-    <div class="container">
-      <p>&copy; 2025 DEV CXXP. All rights reserved.</p>
-    </div>
+    <p>DBwallet &copy; 2025. All rights reserved.</p>
   </footer>
+
+  <script>
+    // Initialize wallet balance and transactions
+    let balance = 0;
+    const transactions = [];
+
+    // Function to add funds
+    function addFunds() {
+      const amountInput = document.getElementById('add-amount');
+      const amount = parseFloat(amountInput.value);
+
+      if (amount > 0) {
+        // Update balance
+        balance += amount;
+        document.getElementById('balance').innerText = balance.toFixed(2);
+
+        // Add to transaction history
+        const transaction = `Added ${amount.toFixed(2)} USD`;
+        transactions.push(transaction);
+        updateTransactionHistory();
+
+        // Clear input
+        amountInput.value = '';
+      } else {
+        alert('Please enter a valid amount.');
+      }
+    }
+
+    // Function to update transaction history
+    function updateTransactionHistory() {
+      const transactionList = document.getElementById('transactions');
+      transactionList.innerHTML = ''; // Clear the list
+      transactions.forEach((transaction) => {
+        const li = document.createElement('li');
+        li.textContent = transaction;
+        transactionList.appendChild(li);
+      });
+    }
+  </script>
 </body>
 </html>
