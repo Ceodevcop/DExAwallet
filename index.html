@@ -1,60 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cryptocurrency Expert Advisor</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Cryptocurrency Expert Advisor</h1>
-        
-        <div class="condition-inputs">
-            <h2>Set Trading Conditions</h2>
-            <div>
-                <label for="base-currency">Base Currency:</label>
-                <input type="text" id="base-currency" value="USDT">
-            </div>
-            <div>
-                <label for="order-asset">Order Asset:</label>
-                <input type="text" id="order-asset" value="DOGS">
-            </div>
-            <div>
-                <label for="buy-threshold">Buy Threshold (%) below base price:</label>
-                <input type="number" id="buy-threshold" value="95" step="0.1" min="0">
-            </div>
-            <div>
-                <label for="sell-threshold">Sell Threshold (%) above base price:</label>
-                <input type="number" id="sell-threshold" value="105" step="0.1" min="0">
-            </div>
-            <div>
-                <label for="order-quantity">Order Quantity:</label>
-                <input type="number" id="order-quantity" value="1" step="0.01" min="0.01">
-            </div>
-        </div>
-        
-        <div class="manual-orders">
-            <h2>Manual Orders</h2>
-            <button id="buy-button">Buy</button>
-            <button id="sell-button">Sell</button>
-        </div>
-        
-        <div class="crypto-info">
-            <h2>Base Currency Price</h2>
-            <div id="base-currency-price">Loading...</div>
-        </div>
-        
-        <div class="crypto-info">
-            <h2>Order Asset Price</h2>
-            <div id="order-asset-price">Loading...</div>
-        </div>
-        
-        <div class="orders">
-            <h2>Orders</h2>
-            <div id="order-log">No orders placed yet.</div>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+<div id="score">Press UP</div>
+
+<div id="controls">
+  <div id="buttons">
+    <button id="accelerate">
+      <svg width="30" height="30" viewBox="0 0 10 10">
+        <g transform="rotate(0, 5,5)">
+          <path d="M5,4 L7,6 L3,6 L5,4" />
+        </g>
+      </svg>
+    </button>
+    <button id="decelerate">
+      <svg width="30" height="30" viewBox="0 0 10 10">
+        <g transform="rotate(180, 5,5)">
+          <path d="M5,4 L7,6 L3,6 L5,4" />
+        </g>
+      </svg>
+    </button>
+  </div>
+  <div id="instructions">
+    Press UP to start. Avoid collision with other vehicles by accelerating
+    or decelerating with the UP and DOWN keys.
+  </div>
+</div>
+
+<div id="results">
+  <div class="content">
+    <h1>You hit another vehicle</h1>
+    <p>To reset the game press R</p>
+
+    <a id="result-youtube" target="_top" href="https://youtu.be/JhgBwJn1bQw">
+      <div class="youtube"></div>
+      <span>Learn how to build this game with Three.js on YouTube</span>
+    </a>
+
+    <p>
+      Follow me
+      <a href="https://twitter.com/HunorBorbely" , target="_top">@HunorBorbely</a>
+    </p>
+  </div>
+</div>
+
+<a id="youtube-main" class="youtube" target="_top" href="https://youtu.be/JhgBwJn1bQw">
+  <span>Learn Three.js</span>
+</a>
+<div id="youtube-card">
+  Learn Three.js while building this game on YouTube
+</div>
