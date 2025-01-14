@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DExAwallet</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js/crypto-js.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #121212; /* Dark Theme */
-            color: white;
+            background-color: #121212; /* Dark theme */
+            color: #ffffff;
         }
 
         header {
@@ -22,51 +24,68 @@
             font-weight: bold;
         }
 
-        .wallet-info {
-            padding: 15px;
-            background: #1E1E1E;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #333;
-        }
-
-        .wallet-info div {
-            margin: 0;
-        }
-
-        .balance {
-            font-size: 14px;
-        }
-
-        .main-content {
+        .container {
             padding: 20px;
         }
 
-        .button-container {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        .button-container button {
+        .logo img {
+            max-width: 100px;
+        }
+
+        .output {
+            margin-top: 20px;
             padding: 15px;
+            background: #1E1E1E;
+            border: 1px solid #333;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .slider-container {
+            margin: 20px 0;
+            background: #1E1E1E;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .slider-container label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .buttons button {
             width: 45%;
+            padding: 15px;
             font-size: 16px;
             font-weight: bold;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            color: white;
         }
 
-        .pump {
+        .buttons .pump {
             background: #28a745; /* Green */
-            color: white;
         }
 
-        .dump {
+        .buttons .dump {
             background: #dc3545; /* Red */
-            color: white;
         }
 
         .footer {
@@ -89,20 +108,6 @@
         .footer div.active {
             color: white;
         }
-
-        .slider-container {
-            margin-top: 20px;
-        }
-
-        .slider-label {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .slider {
-            width: 100%;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
@@ -110,26 +115,22 @@
         DExAwallet
     </header>
 
-    <div class="wallet-info">
-        <div>
-            <p><strong>DB_wallet</strong></p>
-            <p class="balance">Avail: 0 USDT</p>
+    <div class="container">
+        <div class="logo">
+            <img src="logo.png" alt="DExAwallet Logo">
         </div>
-        <div>
-            <p>Loans: 0</p>
+        <div class="output" id="output">
+            Welcome to DExAwallet. Manage your crypto securely!
         </div>
-    </div>
 
-    <div class="main-content">
-        <h3>Leverage</h3>
         <div class="slider-container">
-            <label for="leverage" class="slider-label">Adjust Leverage:</label>
-            <input type="range" id="leverage" class="slider" min="1" max="10" value="5">
+            <label for="leverage">Leverage Adjustment</label>
+            <input type="range" id="leverage" min="1" max="10" value="5">
         </div>
 
-        <div class="button-container">
-            <button class="pump">Pump</button>
-            <button class="dump">Dump</button>
+        <div class="buttons">
+            <button class="pump" onclick="createWallet()">Pump</button>
+            <button class="dump" onclick="importWallet()">Dump</button>
         </div>
     </div>
 
@@ -139,5 +140,25 @@
         <div>Campaign</div>
         <div>Wallet</div>
     </div>
+
+    <script>
+        let web3 = new Web3(Web3.givenProvider || "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID");
+
+        function createWallet() {
+            const wallet = web3.eth.accounts.create();
+            const encryptedKey = CryptoJS.AES.encrypt(wallet.privateKey, "password").toString();
+            document.getElementById('output').innerHTML = `
+                <p><b>Address:</b> ${wallet.address}</p>
+                <p><b>Encrypted Private Key:</b> ${encryptedKey}</p>
+            `;
+        }
+
+        function importWallet() {
+            const privateKey = prompt("Enter your private key:");
+            const decryptedKey = CryptoJS.AES.decrypt(privateKey, "password").toString(CryptoJS.enc.Utf8);
+            const wallet = web3.eth.accounts.privateKeyToAccount(decryptedKey);
+            document.getElementById('output').innerHTML = `<p><b>Wallet Address:</b> ${wallet.address}</p>`;
+        }
+    </script>
 </body>
 </html>
