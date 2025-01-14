@@ -3,26 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Expert Advisor</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>DExAwallet</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Cryptocurrency Expert Advisor</h1>
-        <div class="controls">
-            <button id="start">Start</button>
-            <button id="stop">Stop</button>
-        </div>
-        <div class="parameters">
-            <label for="buyPrice">Buy Price:</label>
-            <input type="number" id="buyPrice" step="0.01" />
-            <label for="sellPrice">Sell Price:</label>
-            <input type="number" id="sellPrice" step="0.01" />
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" step="0.01" />
-        </div>
-        <div id="status"></div>
+        <h1>DExAwallet</h1>
+        <h2>Manage Your Crypto</h2>
+
+        <button class="button" onclick="createWallet()">Create Wallet</button>
+        <button class="button" onclick="importWallet()">Import Wallet</button>
+        <button class="button" onclick="checkBalance()">Check Balance</button>
+        <button class="button" onclick="sendTransaction()">Send Transaction</button>
+
+        <div id="output"></div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        // Initialize Web3
+        let web3 = new Web3(Web3.givenProvider || "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID");
+
+        // Create a Wallet
+        function createWallet() {
+            const account = web3.eth.accounts.create();
+            document.getElementById('output').innerHTML = `
+                <p><b>New Wallet Created:</b></p>
+                <p>Address: ${account.address}</p>
+                <p>Private Key: ${account.privateKey}</p>
+                <p><b>Note:</b> Save your private key securely!</p>
+            `;
+        }
+
+        // Import a Wallet
+        function importWallet() {
+            const privateKey = prompt("Enter your private key:");
+            try {
+                const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+                document.getElementById('output').innerHTML = `
+                    <p><b>Wallet Imported:</b></p>
+                    <p>Address: ${account.address}</p>
+                `;
+            } catch (error) {
+                document.getElementById('output').innerHTML = `<p>Error: Invalid private key.</p>`;
+            }
+        }
+
+        // Check Balance
+        async function checkBalance() {
+            const address = prompt("Enter your wallet address:");
+            try {
+                const balance = await web3.eth.getBalance(address);
+                document.getElementById('output').innerHTML = `
+                    <p><b>Balance:</b> ${web3.utils.fromWei(balance, "ether")} ETH</p>
+                `;
+            } catch (error) {
+                document.getElementById('output').innerHTML = `<p>Error: Could not fetch balance.</p>`;
+            }
+        }
+
+        // Send Transaction
+        async function sendTransaction() {
+            const fromPrivateKey = prompt("Enter your private key:");
+            const toAddress = prompt("Enter the recipient's address:");
+            const amount = prompt("Enter the amount in ETH:");
+            try {
+                const account = web3.eth.accounts.privateKeyToAccount(fromPrivateKey);
+                const tx = {
+                    to: toAddress,
+                    value: web3.utils.toWei(amount, "ether"),
+                    gas: 21000
+                };
+                const signedTx = await account.signTransaction(tx);
+                const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+                document.getElementById('output').innerHTML = `
+                    <p><b>Transaction Sent!</b></p>
+                    <p>Transaction Hash: ${receipt.transactionHash}</p>
+                `;
+            } catch (error) {
+                document.getElementById('output').innerHTML = `<p>Error: Could not send transaction.</p>`;
+            }
+        }
+    </script>
 </body>
 </html>
