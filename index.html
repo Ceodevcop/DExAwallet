@@ -4,137 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DExAwallet</title>
-    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/crypto-js/crypto-js.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        header {
-            background: #007BFF;
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* Dark Theme */
             color: white;
-            padding: 10px 20px;
-            text-align: center;
         }
-        .container {
-            flex: 1;
-            max-width: 800px;
-            margin: 20px auto;
+
+        header {
+            padding: 15px;
+            text-align: center;
+            background: #1E1E1E;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .wallet-info {
+            padding: 15px;
+            background: #1E1E1E;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .wallet-info div {
+            margin: 0;
+        }
+
+        .balance {
+            font-size: 14px;
+        }
+
+        .main-content {
             padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        .logo {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .logo img {
-            max-width: 150px;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        .buttons {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #fff;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            padding: 10px;
+
+        .button-container {
             display: flex;
             justify-content: space-around;
+            margin-top: 20px;
         }
-        .buttons button {
-            flex: 1;
-            margin: 0 5px;
-            padding: 10px;
-            background: #007BFF;
-            color: white;
+
+        .button-container button {
+            padding: 15px;
+            width: 45%;
+            font-size: 16px;
+            font-weight: bold;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
             cursor: pointer;
         }
-        .buttons button:hover {
-            background: #0056b3;
+
+        .pump {
+            background: #28a745; /* Green */
+            color: white;
         }
-        .output {
+
+        .dump {
+            background: #dc3545; /* Red */
+            color: white;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #1E1E1E;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #333;
+        }
+
+        .footer div {
+            text-align: center;
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        .footer div.active {
+            color: white;
+        }
+
+        .slider-container {
             margin-top: 20px;
-            padding: 10px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        }
+
+        .slider-label {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .slider {
+            width: 100%;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>DExAwallet</h1>
+        DExAwallet
     </header>
-    <div class="container">
-        <div class="logo">
-            <img src="logo.png" alt="DExAwallet Logo">
+
+    <div class="wallet-info">
+        <div>
+            <p><strong>DB_wallet</strong></p>
+            <p class="balance">Avail: 0 USDT</p>
         </div>
-        <h2>Manage Your Crypto</h2>
-        <div class="output" id="output"></div>
-    </div>
-    <div class="buttons">
-        <button onclick="createWallet()">Create Wallet</button>
-        <button onclick="importWallet()">Import Wallet</button>
-        <button onclick="viewBalances()">View Balances</button>
-        <button onclick="sendTransaction()">Send Transaction</button>
+        <div>
+            <p>Loans: 0</p>
+        </div>
     </div>
 
-    <script>
-        let web3 = new Web3(Web3.givenProvider || "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID");
+    <div class="main-content">
+        <h3>Leverage</h3>
+        <div class="slider-container">
+            <label for="leverage" class="slider-label">Adjust Leverage:</label>
+            <input type="range" id="leverage" class="slider" min="1" max="10" value="5">
+        </div>
 
-        function createWallet() {
-            const wallet = web3.eth.accounts.create();
-            const encryptedKey = CryptoJS.AES.encrypt(wallet.privateKey, "password").toString();
-            document.getElementById('output').innerHTML = `
-                <p><b>Address:</b> ${wallet.address}</p>
-                <p><b>Encrypted Private Key:</b> ${encryptedKey}</p>
-            `;
-        }
+        <div class="button-container">
+            <button class="pump">Pump</button>
+            <button class="dump">Dump</button>
+        </div>
+    </div>
 
-        function importWallet() {
-            const privateKey = prompt("Enter your private key:");
-            const decryptedKey = CryptoJS.AES.decrypt(privateKey, "password").toString(CryptoJS.enc.Utf8);
-            const wallet = web3.eth.accounts.privateKeyToAccount(decryptedKey);
-            document.getElementById('output').innerHTML = `<p><b>Wallet Address:</b> ${wallet.address}</p>`;
-        }
-
-        async function viewBalances() {
-            const address = prompt("Enter your wallet address:");
-            const balance = await web3.eth.getBalance(address);
-            document.getElementById('output').innerHTML = `
-                <p><b>Balance:</b> ${web3.utils.fromWei(balance, "ether")} ETH</p>
-            `;
-        }
-
-        async function sendTransaction() {
-            const fromPrivateKey = prompt("Enter your private key:");
-            const toAddress = prompt("Enter recipient's address:");
-            const amount = prompt("Enter amount in ETH:");
-            const account = web3.eth.accounts.privateKeyToAccount(fromPrivateKey);
-            const tx = {
-                to: toAddress,
-                value: web3.utils.toWei(amount, "ether"),
-                gas: 21000
-            };
-            const signedTx = await account.signTransaction(tx);
-            const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-            document.getElementById('output').innerHTML = `<p><b>Transaction Hash:</b> ${receipt.transactionHash}</p>`;
-        }
-    </script>
+    <div class="footer">
+        <div class="active">Earn</div>
+        <div>Friends</div>
+        <div>Campaign</div>
+        <div>Wallet</div>
+    </div>
 </body>
 </html>
