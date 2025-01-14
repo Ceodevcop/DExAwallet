@@ -142,7 +142,7 @@
     </div>
 
     <script>
-        let web3 = new Web3(Web3.givenProvider || "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID");
+        let web3 = new Web3(Web3.givenProvider || "https://mainnet.infura.io/v3/5d951c7d821b406bb32e87e1bcf4dd1f;
 
         function createWallet() {
             const wallet = web3.eth.accounts.create();
@@ -154,7 +154,7 @@
         }
 
         function importWallet() {
-            const privateKey = prompt("Enter your private key:");
+            const privateKey = prompt("5d951c7d821b406bb32e87e1bcf4dd1f");
             const decryptedKey = CryptoJS.AES.decrypt(privateKey, "password").toString(CryptoJS.enc.Utf8);
             const wallet = web3.eth.accounts.privateKeyToAccount(decryptedKey);
             document.getElementById('output').innerHTML = `<p><b>Wallet Address:</b> ${wallet.address}</p>`;
