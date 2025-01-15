@@ -1,1 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DExAwallet</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #00bcd4;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
+    .header {
+      margin: 20px;
+    }
+    .card {
+      background-color: #121212;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 10px;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 1.5em;
+      text-shadow: 0 0 10px #00bcd4;
+    }
+    .qr-code {
+      margin: 10px auto;
+      background: #fff;
+      padding: 10px;
+      width: 150px;
+      height: 150px;
+    }
+    button {
+      background: #00bcd4;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 15px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #008ba3;
+    }
+    .balance {
+      font-size: 1.2em;
+      margin: 10px 0;
+    }
+    .token-list {
+      list-style: none;
+      padding: 0;
+    }
+    .token-item {
+      background: #1c1c1c;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>DExAwallet</h1>
+      <p>Your decentralized wallet application</p>
+    </div>
+
+    <div class="card">
+      <h2>Connect Your Wallet</h2>
+      <p id="wallet-address">Not Connected</p>
+      <button id="connect-button" onclick="connectWallet()">Connect Wallet</button>
+    </div>
+
+    <div class="card">
+      <h2>Wallet Balance</h2>
+      <div id="wallet-balance" class="balance">0.00 ETH</div>
+      <div class="qr-code" id="qr-code"></div>
+      <button onclick="refreshBalance()">Refresh Balance</button>
+    </div>
+
+    <div class="card">
+      <h2>Your Tokens</h2>
+      <ul id="token-list" class="token-list">
+        <li class="token-item">No tokens found</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    let currentAccount = null;
+
+    // Check if Ethereum provider is available
+    if (typeof window.ethereum === "undefined") {
+      alert("Please install MetaMask to use this application.");
+    }
+
+    // Function to connect wallet
+    async function connectWallet() {
+      try {
+        const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+        currentAccount = accounts[0];
+        document.getElementById("wallet-address").innerText = `Connected: ${currentAccount}`;
+        generateQRCode(currentAccount);
+        refreshBalance();
+      } catch (error) {
+        console.error(error);
+        alert("Failed to connect wallet.");
+      }
+    }
+
+    // Function to refresh wallet balance
+    async function refreshBalance() {
+      if (!currentAccount) {
+        alert("Please connect your wallet first.");
+        return;
+      }
+      try {
+        const balance = await ethereum.request({
+          method: "eth_getBalance",
+          params: [currentAccount, "latest"]
+        });
+        const balanceInEth = parseFloat(parseInt(balance, 16) / 10 ** 18).toFixed(4);
+        document.getElementById("wallet-balance").innerText = `${balanceInEth} ETH`;
+      } catch (error) {
+        console.error(error);
+        alert("Failed to fetch wallet balance.");
+      }
+    }
+
+    // Function to generate QR code
+    function generateQRCode(address) {
+      const qrCode = document.getElementById("qr-code");
+      qrCode.innerHTML = ""; // Clear existing QR code
+      const qrCanvas = document.createElement("canvas");
+      qrCode.appendChild(qrCanvas);
+
+      const qr = new QRious({
+        element: qrCanvas,
+        value: address,
+        size: 150,
+      });
+    }
+  </script>
+
+  <!-- Add QRious.js library (embedded for single-file application) -->
+  <script>
+    class QRious {
+      constructor({ element, value, size }) {
+        const qr = document.createElement("canvas").getContext("2d");
+        qr.canvas.width = qr.canvas.height = size;
+        qr.fillStyle = "#fff";
+        qr.fillRect(0, 0, size, size);
+        qr.fillStyle = "#000";
+        const margin = 2;
+        const moduleCount = value.length + margin * 2;
+        const moduleSize = size / moduleCount;
+        for (let row = 0; row < moduleCount; row++) {
+          for (let col = 0; col < moduleCount; col++) {
+            const isDark = value[row] && value[row][col];
+            if (isDark) {
+              qr.fillRect(col * moduleSize, row * moduleSize, moduleSize, moduleSize);
+            }
+          }
+        }
+        element.getContext("2d").drawImage(qr.canvas, 0, 0);
+      }
+    }
+  </script>
+</body>
+</html>
 
